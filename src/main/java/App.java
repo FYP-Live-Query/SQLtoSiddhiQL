@@ -20,7 +20,10 @@ public class App {
         IEngine middleEngine  = new MiddleEngine().setSiddhiApp(siddhiApp);
 
         statement.accept(new CustomSelectStatementVisitor(middleEngine));
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     }
 
 }

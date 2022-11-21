@@ -51,7 +51,6 @@ public class AST {
 
     public static void generateSiddhiApp(String StringSQLSelectStatement){
         SiddhiApp siddhiApp = new SiddhiApp();
-
         IEngine middleEngine  = new MiddleEngine().setSiddhiApp(siddhiApp);
         Statement statement = null;
         try {
@@ -61,5 +60,6 @@ public class AST {
         }
         assert statement != null;
         statement.accept(new CustomSelectStatementVisitor(middleEngine));
+        siddhiApp.getSelectItemListAsString();
     }
 }
