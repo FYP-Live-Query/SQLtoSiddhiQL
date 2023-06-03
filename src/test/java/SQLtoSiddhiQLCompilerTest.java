@@ -151,8 +151,8 @@ public class SQLtoSiddhiQLCompilerTest {
 //                "select customers.first_name, addresses.city\n" +
 //                "insert into customersOutputStream;\n";
 
-        String generalProjectionSQL = "select order.orderId@string, item.itemType@string, item.unitPrice@float, " +
-                "order.totalRevenue@float, order.totalCost@float, order.totalProfit@float from item join order on item.itemType@string=order.itemType@string;";
+        String generalProjectionSQL = "select order.orderId@string, item.itemType@string, item.unitPrice@float, order.totalRevenue@float, " +
+                "order.totalCost@float, order.totalProfit@float from item join order on item.itemType@string=order.itemType@string";
 
         siddhiAppDefinition = "@app:name(\"SiddhiAppName-dev\")\n" +
                 "@source(type = \"live\",table.name = \"item\", sql.query = \"SELECT order.orderId@string, item.unitPrice@float FROM item " +
