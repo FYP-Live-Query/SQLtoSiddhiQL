@@ -135,22 +135,33 @@ public class SQLtoSiddhiQLCompilerTest {
     @Test
     void generateSiddhiAppForSQLSelectStatementWithJoin() throws JSQLParserException {
 //        select  customers.first_name, addresses.city on customers.id = addresses.customer_id;
-        String generalProjectionSQL = "SELECT customers.first_name@string , addresses.city@string FROM customers JOIN addresses ON customers.id@int = addresses.customer_id@int";
+//        String generalProjectionSQL = "SELECT customers.first_name@string , addresses.city@string FROM customers JOIN addresses ON customers.id@int = addresses.customer_id@int";
+//
 //        siddhiAppDefinition = "@app:name(\"SiddhiAppName-dev\")\n" +
-//                "@source(type = \"live\",sql.query = \"SELECT a FROM table JOIN table90 ON table.id = table90.id\",@map(type = \"json\",@attributes(a = \"a\")))\n" +
-//                "define stream tableInputStream(a string);\n" +
+//                "@source(type = \"live\",table.name = \"customers\", sql.query = \"SELECT customers.first_name , addresses.city FROM customers JOIN addresses ON customers.id = addresses.customer_id\",@map(type = \"json\",@attributes(first_name = \"first_name\",id = \"id\",city = \"city\",customer_id = \"customer_id\")))\n" +
+//                "define stream customersInputStream(first_name string,id int);\n" +
+//                "@source(type = \"live\",table.name = \"addresses\", sql.query = \"SELECT customers.first_name , addresses.city FROM customers JOIN addresses ON customers.id = addresses.customer_id\",@map(type = \"json\",@attributes(first_name = \"first_name\",id = \"id\",city = \"city\",customer_id = \"customer_id\")))\n" +
+//                "define stream addressesInputStream(city string,customer_id int);\n" +
 //                "@sink(type = \"log\")\n" +
-//                "define stream tableOutputStream(a string);\n" +
+//                "define stream customersOutputStream(first_name string,city string);\n" +
 //                "@info(name = \"default-name\")\n" +
-//                "from tableInputStream join table90\n" +
-//                "on table.id == table90.id\n" +
-//                "select  a  \n" +
-//                "insert into tableOutputStream;\n";
+//                "from customersInputStream#window.length(3) as customers\n" +
+//                "join addressesInputStream#window.length(3) as addresses\n" +
+//                "on customers.id == addresses.customer_id\n" +
+//                "select customers.first_name, addresses.city\n" +
+//                "insert into customersOutputStream;\n";
+
+        String generalProjectionSQL = "select order.orderId@string, item.itemType@string, item.unitPrice@float, " +
+                "order.totalRevenue@float, order.totalCost@float, order.totalProfit@float from item join order on item.itemType@string=order.itemType@string;";
 
         siddhiAppDefinition = "@app:name(\"SiddhiAppName-dev\")\n" +
-                "@source(type = \"live\",table.name = \"customers\", sql.query = \"SELECT customers.first_name , addresses.city FROM customers JOIN addresses ON customers.id = addresses.customer_id\",@map(type = \"json\",@attributes(first_name = \"first_name\",id = \"id\",city = \"city\",customer_id = \"customer_id\")))\n" +
+                "@source(type = \"live\",table.name = \"item\", sql.query = \"SELECT order.orderId@string, item.unitPrice@float FROM item " +
+                "JOIN order ON item.itemType=order.itemType\",@map(type = \"json\"," +
+                "@attributes(orderId = \"orderId\",unitPrice = \"unitPrice\",city = \"city\",customer_id = \"customer_id\")))\n" +
                 "define stream customersInputStream(first_name string,id int);\n" +
-                "@source(type = \"live\",table.name = \"addresses\", sql.query = \"SELECT customers.first_name , addresses.city FROM customers JOIN addresses ON customers.id = addresses.customer_id\",@map(type = \"json\",@attributes(first_name = \"first_name\",id = \"id\",city = \"city\",customer_id = \"customer_id\")))\n" +
+                "@source(type = \"live\",table.name = \"order\", sql.query = \"SELECT order.orderId@string, item.unitPrice@float FROM item " +
+                "JOIN order ON item.itemType=order.itemType\",@map(type = \"json\"," +
+                "@attributes(first_name = \"first_name\",id = \"id\",city = \"city\",customer_id = \"customer_id\")))\n" +
                 "define stream addressesInputStream(city string,customer_id int);\n" +
                 "@sink(type = \"log\")\n" +
                 "define stream customersOutputStream(first_name string,city string);\n" +
@@ -160,10 +171,9 @@ public class SQLtoSiddhiQLCompilerTest {
                 "on customers.id == addresses.customer_id\n" +
                 "select customers.first_name, addresses.city\n" +
                 "insert into customersOutputStream;\n";
-
         SiddhiApp siddhiApp = SiddhiAppGenerator.generateSiddhiApp(generalProjectionSQL);
 //        System.out.println(siddhiAppDefinition);
-//        System.out.println(siddhiApp.getSiddhiAppStringRepresentation());
+        System.out.println(siddhiApp.getSiddhiAppStringRepresentation());
         assertEquals(siddhiAppDefinition, siddhiApp.getSiddhiAppStringRepresentation());
     }
 
